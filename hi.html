@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Find Day of the Week</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            background-color: #f0f8ff;
+            color: #000;
+            transition: background-color 0.4s, color 0.4s;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        input[type="date"] {
+            padding: 8px;
+            font-size: 16px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #fffce0;
+        }
+
+        button {
+            padding: 10px 16px;
+            font-size: 16px;
+            margin-right: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            font-weight: bold;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #e6f7ff;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        #historyList {
+            margin-top: 20px;
+            padding-left: 20px;
+        }
+
+        .dark-theme {
+            background-color: #121212;
+            color: #eee;
+        }
+
+        .dark-theme input[type="date"] {
+            background-color: #333;
+            color: white;
+            border-color: #666;
+        }
+
+        .dark-theme #result {
+            background-color: #2a2a2a;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+
+            input[type="date"] {
+                width: 100%;
+            }
+
+            button {
+                width: 100%;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Find the Day of the Week</h2>
+
+    <label for="datePicker">Select a Date:</label><br>
+    <input type="date" id="datePicker"><br>
+
+    <button onclick="findDayFromPicker()">Find Day</button>
+    <button onclick="toggleTheme()">Toggle Theme</button>
+
+    <div id="result"></div>
+
+    <h3>Search History</h3>
+    <ul id="historyList"></ul>
+
+    <script>
+        function getWeekday(day, month, year) {
+            if (month < 3) {
+                month += 12;
+                year -= 1;
+            }
+
+            const k = year % 100;
+            const j = Math.floor(year / 100);
+
+            const h = (day + Math.floor(13 * (month + 1) / 5) + k + Math.floor(k / 4)
+                        + Math.floor(j / 4) + 5 * j) % 7;
+
+            const dayIndex = (h + 6) % 7;
+            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            return dayNames[dayIndex];
+        }
+
+        function findDayFromPicker() {
+            const dateStr = document.getElementById("datePicker").value;
+            const resultBox = document.getElementById("result");
+
+            if (!dateStr) {
+                resultBox.innerText = "Please select a date.";
+                resultBox.style.backgroundColor = "#ffe6e6"; // Light red for error
+                return;
+            }
+
+            const parts = dateStr.split("-");
+            const y = parseInt(parts[0]);
+            const m = parseInt(parts[1]);
+            const d = parseInt(parts[2]);
+
+            const dayName = getWeekday(d, m, y);
+            resultBox.innerText = `The day on ${d}/${m}/${y} is: ${dayName}`;
+            resultBox.style.backgroundColor = "#e6f7ff"; // Light blue on success
+
+            // Add to history
+            const historyItem = document.createElement("li");
+            historyItem.innerText = `${d}/${m}/${y} → ${dayName}`;
+            document.getElementById("historyList").appendChild(historyItem);
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle("dark-theme");
+        }
+    </script>
+
+</body>
+</html>
